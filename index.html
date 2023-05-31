@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Demo 20230526</title>
+    <title>Catchup 20230602</title>
     <style>
         body {
             font-family: sans-serif;
@@ -14,114 +14,126 @@
     </style>
 </head>
 <body>
-<h1>wav2vec2wav: A Wav2Vec-based autoencoder</h1>
+<h1>An autoencoder using HuBERT and HifiGAN</h1>
 <div>
     <p>
-        <a href="https://jonathanbgn.com/2021/09/30/illustrated-wav2vec-2.html">Wav2Vec2</a> is a fully-causal
-        Transformer network producing rich embeddings from raw speech.
+        <a href="https://jonathanbgn.com/2021/10/30/hubert-visually-explained.html">HuBERT</a> is a similar fully-causal
+        Transformer network to Wav2Vec.  It seems to be better at speech audio re-synthesis.
+        Its main differnece from Wav2Vec is in the way it learns its phoneme-like lexicon
+        using K-Means clustering interleaved with the context training rather than Wav2Vec's quantization using Gumbel-softmax.
+
+    </p>
+
+    <p>
+        We're currently running experiments training a decoder of our own
+        design to resynthesize audio using  a pretrained large (24-block) HuBERT network as the encoder.<br /> The decoder is based on <a href="https://github.com/jik876/hifi-gan">HiFi-GAN</a>.
 
     </p>
     <p>
-        It has been used for a number of speech tasks, including speaker identification and diarization, emotion
-        detection, and, of course, speech to text.
+        The HuBERT model has a slightly larger embedding size than Wav2Vec (1024 as opposed to 768). Both have an initial latent feature encoder.
     </p>
     <p>
-        We're currently running experiments to use a pretrained Wav2Vec2 model in conjunction with a decoder of our own
-        design to resynthesize audio.
-        <b>The decoder models are at an early stage of training -- training takes about seven days.</b>
+        The results below show attempts at resynthsis from the final state (i.e. block 24) and the zeroth block (i.e the output of the initial feature encoder).
+        Included are clean, noisy and denosied inputs for a male and female speaker from our validation set.
     </p>
+        </p>
+    <p>
+        The denoised inputs were generated from our current best-performing denoising model (based on Facebook's <a href="https://github.com/facebookresearch/demucs">Demucs</a>).
+    </p>
+    <hr/>
     <table>
         <thead>
         <tr>
-            <th>Sample</th>
-            <th>w2v_conv</th>
+
+            <th colspan="2">Sample</th>
+            <th>HuBERT Hidden-state 0<br/>Epoch 74/500</th>
+            <th>HuBERT Final state<br/>Epoch 287/500</th>
         </tr>
         </thead>
         <tbody>
         <tr>
+        <td>Female clean</td>
             <td>
-                <audio controls src="media/valid_female_clean_020.wav"></audio>
+                <audio controls src="media/input_samples/valid_female_clean_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/w2v_conv_525_clean_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00/74/out_clean_female_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX/287/out_clean_female_020.wav"></audio>
             </td>
 
         </tr>
         <tr>
+        <td>Male clean</td>
             <td>
-                <audio controls src="media/valid_male_clean_020.wav"></audio>
+                <audio controls src="media/input_samples/valid_male_clean_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/w2v_conv_525_clean_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00/74/out_clean_male_020.wav"></audio>
+            </td>
+                        <td>
+                <audio controls src="media/hubert/hubert_hsXX/287/out_clean_male_020.wav"></audio>
             </td>
         </tr>
                 <tr>
+                        <td>Female noisy</td>
             <td>
-                <audio controls src="media/valid_female_noisy_2.1_020.wav"></audio>
+                <audio controls src="media/input_samples/valid_female_noisy_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/w2v_conv_525_noisy_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00/74/out_noisy_female_020.wav"></audio>
             </td>
-
+                        <td>
+                <audio controls src="media/hubert/hubert_hsXX/287/out_noisy_female_020.wav"></audio>
+            </td>
         </tr>
         <tr>
+                                <td>Male noisy</td>
             <td>
-                <audio controls src="media/valid_male_noisy_2.1_020.wav"></audio>
+                <audio controls src="media/input_samples/valid_male_noisy_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/w2v_conv_525_noisy_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00/74/out_noisy_male_020.wav"></audio>
+            </td>
+                        <td>
+                <audio controls src="media/hubert/hubert_hsXX/287/out_noisy_male_020.wav"></audio>
             </td>
         </tr>
+                       <tr>
+                        <td>Female denoised</td>
+            <td>
+                <audio controls src="media/input_samples/valid_female_denoised_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00/74/out_denoised_female_020.wav"></audio>
+            </td>
+                        <td>
+                <audio controls src="media/hubert/hubert_hsXX/287/out_denoised_female_020.wav"></audio>
+            </td>
+        </tr>
+        <tr>
+                                <td>Male denoised</td>
+            <td>
+                <audio controls src="media/input_samples/valid_male_denoised_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00/74/out_denoised_male_020.wav"></audio>
+            </td>
+                        <td>
+                <audio controls src="media/hubert/hubert_hsXX/287/out_denoised_male_020.wav"></audio>
+            </td>
+        </tr>
+
         </tbody>
     </table>
-       <table>
-        <thead>
-        <tr>
-            <th>Sample</th>
-            <th>w2v_gan</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                <audio controls src="media/valid_female_clean_020.wav"></audio>
-            </td>
-            <td>
-                <audio controls src="media/w2v2w/hidden_state_XX/55/out_clean_female_020.wav"></audio>
-            </td>
 
-        </tr>
-        <tr>
-            <td>
-                <audio controls src="media/valid_male_clean_020.wav"></audio>
-            </td>
-            <td>
-                <audio controls src="media/w2v2w/hidden_state_XX/55/out_clean_male_020.wav"></audio>
-
-        </tr>
-                <tr>
-            <td>
-                <audio controls src="media/valid_female_noisy_2.1_020.wav"></audio>
-            </td>
-            <td>
-                <audio controls src="media/w2v2w/hidden_state_XX/55/out_noisy_female_020.wav"></audio>
-            </td>
-
-        </tr>
-        <tr>
-            <td>
-                <audio controls src="media/valid_male_noisy_2.1_020.wav"></audio>
-            </td>
-            <td>
-                <audio controls src="media/w2v2w/hidden_state_XX/55/out_noisy_male_020.wav"></audio>
-            </td>
-
-        </tr>
-        </tbody>
-    </table>
 
 </div>
-
+<div>
+Previous catch-ups:
+<a href="index_20230526.html">2023-05-26</a>
+</div>
 
 </body>
 </html>
