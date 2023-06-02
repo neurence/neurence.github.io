@@ -142,6 +142,41 @@
 
 
 </div>
+<div>
+    <h2>Neural audio codecs</h2>
+    <p>Neural networks trained to compress speech, music and general audio. 
+       Below are two examples of encoder-decoder networks with vector quantization inbetween trained end-to-end with a STFT based discriminator.</p>
+    <br/>
+    <h4>SoundStream</h4>
+    <p><a href="https://arxiv.org/abs/2107.03312">Paper</a> <a href="https://google-research.github.io/seanet/soundstream/examples/">Samples</a></p>
+    <table>
+        <tr>
+            <td>Clean</td>
+            <td><audio controls src="media/soundstream/clean_example1.wav"/></td>
+            <td><audio controls src="media/soundstream/clean_example1_encdec.wav"/></td>
+        </tr>
+        <tr>
+            <td>Noisy</td>
+            <td><audio controls src="media/soundstream/noisy_example1.wav"/></td>
+            <td><audio controls src="media/soundstream/noisy_example1_encdec.wav"/></td>
+        </tr>
+    </table>
+    <br/>
+    <h4>Encodec</h4>
+    <p><a href="https://arxiv.org/pdf/2210.13438.pdf">Paper</a> <a href="https://github.com/facebookresearch/encodec">Github</a></p>
+    <table>
+        <tr>
+            <td>Clean</td>
+            <td><audio controls src="media/encodec/clean_example1.wav"/></td>
+            <td><audio controls src="media/encodec/clean_example1_encdec.wav"/></td>
+        </tr>
+        <tr>
+            <td>Noisy</td>
+            <td><audio controls src="media/encodec/noisy_example1.wav"/></td>
+            <td><audio controls src="media/encodec/noisy_example1_encdec.wav"/></td>
+        </tr>
+    </table>
+</div>
 <hr/>
 <div>
     Previous catch-ups:
