@@ -26,21 +26,16 @@
         Its main difference from Wav2Vec2 is in the way it learns its phoneme-like lexicon
         using K-Means clustering interleaved with the context training rather than Wav2Vec2's quantization using
         Gumbel-softmax.
-
     </p>
 
     <p>
         We're currently running experiments training a decoder of our own
         design to resynthesize audio using a pretrained large (24-block) HuBERT network as the encoder.<br/> The decoder
-        is based on <a href="https://github.com/jik876/hifi-gan">HiFi-GAN</a>.
-
+        is based on <a href="https://github.com/jik876/hifi-gan">HiFi-GAN</a>. Our previous training was using the LJSpeech dataset, which consists of clean speech data from one speaker. We have now updated the model's data generator to train using the LibriSpeech dataset which has speech data from over two hundred speakers.
     </p>
+  
     <p>
-        The HuBERT model used in our experiments has a larger embedding size than the Wav2Vec2 model used previously (1024 as opposed to 768), but otherwise the architectures are very similar. Both have an
-        initial latent feature encoder (L.F.E.), which is a more-or-less conventional ConvNet.
-    </p>
-    <p>
-        The audio samples below show outputs from the decoder trained using:
+        The audio samples below show some early outputs from the decoder trained using:
     <ul>
     <li>the latent feature encoder's output;</li>
     <li>the context network's (transformer encoder) output.</li>
@@ -56,8 +51,8 @@
         <tr>
 
             <th>Sample</th>
-            <th>L.F.E. output<br/>Epoch 161/500</th>
-            <th>Transformer output<br/>Epoch 370/500</th>
+            <th>L.F.E. output<br/>Epoch 29</th>
+            <th>Transformer output<br/>Epoch 25</th>
         </tr>
         </thead>
         <tbody>
@@ -68,10 +63,10 @@
                 <audio controls src="media/input_samples/valid_female_clean_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hs00/161/out_clean_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/out_clean_female_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hsXX/370/out_clean_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/out_clean_female_020.wav"></audio>
             </td>
         </tr>
         <tr>
@@ -80,10 +75,10 @@
                 <audio controls src="media/input_samples/valid_male_clean_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hs00/161/out_clean_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/out_clean_male_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hsXX/370/out_clean_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/out_clean_male_020.wav"></audio>
             </td>
         </tr>
         <tr><td colspan="3"><h5>Noisy</h5></td></tr>
@@ -93,10 +88,10 @@
                 <audio controls src="media/input_samples/valid_female_noisy_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hs00/161/out_noisy_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/out_noisy_female_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hsXX/370/out_noisy_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/out_noisy_female_020.wav"></audio>
             </td>
         </tr>
         <tr>
@@ -105,10 +100,10 @@
                 <audio controls src="media/input_samples/valid_male_noisy_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hs00/161/out_noisy_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/out_noisy_male_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hsXX/370/out_noisy_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/out_noisy_male_020.wav"></audio>
             </td>
         </tr>
         <tr><td colspan="3"><h5>Denoised</h5></td></tr>
@@ -118,10 +113,10 @@
                 <audio controls src="media/input_samples/valid_female_denoised_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hs00/161/out_denoised_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/out_denoised_female_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hsXX/370/out_denoised_female_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/out_denoised_female_020.wav"></audio>
             </td>
         </tr>
         <tr>
@@ -130,10 +125,10 @@
                 <audio controls src="media/input_samples/valid_male_denoised_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hs00/161/out_denoised_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/out_denoised_male_020.wav"></audio>
             </td>
             <td>
-                <audio controls src="media/hubert/hubert_hsXX/370/out_denoised_male_020.wav"></audio>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/out_denoised_male_020.wav"></audio>
             </td>
         </tr>
 
@@ -143,43 +138,11 @@
 
 </div>
 <br/>
-<div>
-    <h1>Neural audio codecs</h1>
-    <p>Neural networks trained to compress speech, music and general audio. 
-       Below are two examples of encoder-decoder networks with vector quantization inbetween trained end-to-end with a STFT based discriminator.</p>
-    <h4>SoundStream</h4>
-    <p><a href="https://arxiv.org/abs/2107.03312">Paper</a> <a href="https://google-research.github.io/seanet/soundstream/examples/">Samples</a></p>
-    <table>
-        <tr>
-            <td>Clean</td>
-            <td><audio controls src="media/soundstream/clean_example1.wav"/></td>
-            <td><audio controls src="media/soundstream/clean_example1_encdec.wav"/></td>
-        </tr>
-        <tr>
-            <td>Noisy</td>
-            <td><audio controls src="media/soundstream/noisy_example1.wav"/></td>
-            <td><audio controls src="media/soundstream/noisy_example1_encdec.wav"/></td>
-        </tr>
-    </table>
-    <br/>
-    <h4>Encodec</h4>
-    <p><a href="https://arxiv.org/pdf/2210.13438.pdf">Paper</a> <a href="https://github.com/facebookresearch/encodec">Github</a></p>
-    <table>
-        <tr>
-            <td>Clean</td>
-            <td><audio controls src="media/encodec/clean_example1.wav"/></td>
-            <td><audio controls src="media/encodec/clean_example1_encdec.wav"/></td>
-        </tr>
-        <tr>
-            <td>Noisy</td>
-            <td><audio controls src="media/encodec/noisy_example1.wav"/></td>
-            <td><audio controls src="media/encodec/noisy_example1_encdec.wav"/></td>
-        </tr>
-    </table>
-</div>
 <hr/>
 <div>
     Previous catch-ups:
+    <a href="index_20230602.html">2023-06-02</a>
+    <br/>
     <a href="index_20230526.html">2023-05-26</a>
 </div>
 
