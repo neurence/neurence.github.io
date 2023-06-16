@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catchup 20230609</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        div {
+            margin: 20px;
+        }
+        table {
+            background: #c7e3ff;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>An autoencoder using HuBERT and Hifi-GAN</h1>
+<div>
+    <p>
+        <a href="https://jonathanbgn.com/2021/10/30/hubert-visually-explained.html">HuBERT</a> is a fully-causal
+        Transformer network similar to Wav2Vec2. It's reportedly better for speech synthesis tasks.
+        Its main difference from Wav2Vec2 is in the way it learns its phoneme-like lexicon
+        using K-Means clustering interleaved with the context training rather than Wav2Vec2's quantization using
+        Gumbel-softmax.
+    </p>
+
+    <p>
+        We're currently running experiments training a decoder of our own
+        design to resynthesize audio using a pretrained large (24-block) HuBERT network as the encoder.<br/> The decoder
+        is based on <a href="https://github.com/jik876/hifi-gan">HiFi-GAN</a>. Our previous training was using the LJSpeech dataset, which consists of clean speech data from one speaker. We have now updated the model's data generator to train using the LibriSpeech dataset which has speech data from over two hundred speakers.
+    </p>
+  
+    <p>
+        The audio samples below show some early outputs from the decoder trained using:
+    <ul>
+    <li>the latent feature encoder's output;</li>
+    <li>the context network's (transformer encoder) output.</li>
+    </ul>
+        Included are clean, noisy and denoised inputs for a male and female speaker from our validation set.
+    </p>
+    <p>
+        The denoised input samples were generated from our current best-performing denoising model.
+    </p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Sample</th>
+            <th>L.F.E. output<br/>Epoch 29</th>
+            <th>Transformer output<br/>Epoch 25</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="3"><h5>Clean</h5></td></tr>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_female_clean_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/valid_female_clean_020_decoded.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/valid_female_clean_020_decoded.wav"></audio>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_male_clean_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/valid_male_clean_020_decoded.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/valid_male_clean_020_decoded.wav"></audio>
+            </td>
+        </tr>
+        <tr><td colspan="3"><h5>Noisy</h5></td></tr>
+        <tr>
+
+            <td>
+                <audio controls src="media/input_samples/valid_female_noisy_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/valid_female_noisy_020_decoded.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/valid_female_noisy_020_decoded.wav"></audio>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <audio controls src="media/input_samples/valid_male_noisy_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/valid_male_noisy_020_decoded.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/valid_male_noisy_020_decoded.wav"></audio>
+            </td>
+        </tr>
+        <tr><td colspan="3"><h5>Denoised</h5></td></tr>
+        <tr>
+
+            <td>
+                <audio controls src="media/input_samples/valid_female_denoised_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/valid_female_denoised_020_decoded.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/valid_female_denoised_020_decoded.wav"></audio>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <audio controls src="media/input_samples/valid_male_denoised_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hs00_librispeech/29/valid_male_denoised_020_decoded.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/hubert/hubert_hsXX_librispeech/25/valid_male_denoised_020_decoded.wav"></audio>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+<br/>
+<h1>Animated light field demo / gpu ray tracing</h1>
+<iframe width="560" height="315"
+    src="https://youtube.com/embed/ltJKPxBna0Y">
+</iframe>
+<hr/>
+<div>
+    Previous catch-ups:
+    <a href="index_20230602.html">2023-06-02</a>
+    <a href="index_20230526.html">2023-05-26</a>
+</div>
+
+</body>
+</html>
