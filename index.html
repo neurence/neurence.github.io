@@ -18,6 +18,14 @@
     </style>
 </head>
 <body>
+<h3>Fine-tuning HuBERT network on speech resynthesis task</h3>
+<p>
+    We're running a new experiment where the encoder (the HuBERT transformer network) is no longer frozen, but is fine-tune trained along with the decoder.
+</p>
+<p>
+    It's hoped that fine-tuning the encoder to the speech synthesis task will improve the autoencoding pipeline.  The outputs are shown in the last column of the tables below.
+    <br/><strong>Note that training using fine-tuning is very slow, and the results are shown at an early epoch (40).</strong>
+</p>
 <h1>Pub recordings - higher SNR</h1>
 <div>
     <p>Two pub recordings with lower noise levels, processed via autoencoder transformer networks with and without demucs denoising network applied first.</p>
@@ -27,6 +35,7 @@
             <th>Noisy</th>
             <th>Transformed Noisy (LJSpeech)</th>
             <th>Transformed Noisy (LibriSpeech)</th>
+            <th>Transformed Noisy (Fine-Tune Encoder)</th>
         </tr>
         </thead>
         <tbody>
@@ -40,6 +49,9 @@
             <td>
                 <audio controls src="media/cambridge_pub_recordings/highersnr_sample1/highersnr_sample1_noisy_transformed_librispeech.wav"></audio>
             </td>
+            <td>
+                <audio controls src="media/cambridge_pub_recordings/highersnr_sample1/output_stewart_hearable.wav"></audio>
+            </td>
         </tr>
         <tr>
             <td>
@@ -51,6 +63,9 @@
             <td>
                 <audio controls src="media/cambridge_pub_recordings/highersnr_sample2/highersnr_sample2_noisy_transformed_librispeech.wav"></audio>
             </td>
+            <td>
+                <audio controls src="media/cambridge_pub_recordings/highersnr_sample2/output_deborah_hearable.wav"></audio>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -61,6 +76,7 @@
             <th>Denoised</th>
             <th>Transformed Denoised (LJSpeech)</th>
             <th>Transformed Denoised (LibriSpeech)</th>
+            <th>Transformed Denoised (Fine-Tune Encoder)</th>
         </tr>
         </thead>
         <tbody>
@@ -74,6 +90,9 @@
             <td>
                 <audio controls src="media/cambridge_pub_recordings/highersnr_sample1/highersnr_sample1_denoised_transformed_librispeech.wav"></audio>
             </td>
+            <td>
+                <audio controls src="media/cambridge_pub_recordings/highersnr_sample1/output_stewart_denoised.wav"></audio>
+            </td>
         </tr>
         <tr>
             <td>
@@ -84,6 +103,9 @@
             </td>
             <td>
                 <audio controls src="media/cambridge_pub_recordings/highersnr_sample2/highersnr_sample2_denoised_transformed_librispeech.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/cambridge_pub_recordings/highersnr_sample2/output_deborah_denoised.wav"></audio>
             </td>
         </tr>
         </tbody>
