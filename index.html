@@ -52,13 +52,13 @@
     <div style="background-color: #c7eef2; padding: 10px">
         <h2>Proof of concept for using speaker embeddings for voice-changing the autoencoder output.</h2>
         <p>Using the <a href="https://arxiv.org/abs/2210.15418">FreeVC</a> one-shot voice conversion framework, we adapted the outputs of the autoencoder using embeddings derived at runtime from the denoised input.</p>
-        <p>Original Audio</p>
+        <p>Denoised Audio</p>
         <audio controls src="media/input_samples/valid_female_denoised_020.wav"></audio>
         <br/>
         <p>Denoised, then autoencoded with network trained on single-speaker dataset (LJSpeech)</p>
         <audio controls src="media/hubert/hubert_hsXX/370/out_denoised_female_020.wav"></audio>
         <br/>
-        <p>Voice-changed</p>
+        <p>Denoised -> autoencoded -> voice-changed</p>
         <audio controls src="media/freevc/outn3xa47rv.wav"></audio>
         <br/>
 
