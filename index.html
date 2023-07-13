@@ -33,17 +33,17 @@
             <table>
                 <thead>
                 <tr>
-                    <th>Original</th><th>Denoised</th><th>HuBERT-Large</th><th>HuBERT-Large+Emb</th><th>WavLM-Base+Emb</th><th>WavLM-Large+SE</th>
+                    <th>Original/Denoised</th><th>HuBERT-Large</th><th>HuBERT-Large+Emb</th><th>WavLM-Base+Emb</th><th>WavLM-Large+SE</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>
-                     <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample1_050723_185337/noisy.wav"></audio>
+                        <div> <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample1_050723_185337/noisy.wav"></audio></div>
+                        <div><audio controls src="media/cambridge_pub_recordings/pub_recordings/sample1_050723_185337/denoised.wav"></audio></div>
+
                     </td>
-                    <td>
-                     <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample1_050723_185337/denoised.wav"></audio>
-                    </td>
+
                     <td>
                      <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample1_050723_185337/hubert_large_denoised.wav"></audio>
                     </td>
@@ -59,13 +59,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                     <td>
+                        <div> <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/noisy.wav"></audio></div>
+                        <div><audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/denoised.wav"></audio></div>
 
-                    <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/noisy.wav"></audio>
-
-                    </td>
-                    <td>
-                     <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/denoised.wav"></audio>
                     </td>
                     <td>
                      <audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/hubert_large_denoised.wav"></audio>
@@ -98,7 +95,7 @@
         <h2>Importance of speaker identification in output quality</h2>
 
         <p>When multiple speakers are present, the incorrect speaker's encoding might be used.</p>
-            <p>To illustrate this, below is the WavLM-Large+SE output from the second audio sample (when Deborah and Josh are speaking), with Josh's voice first included, and then removed from the audio.</p>
+            <p>To illustrate this, below is the WavLM-Large+SE output from the second audio sample (when Deborah and Josh are speaking), with Josh's voice first included, and then removed from the source audio.</p>
 <table>
     <thead><tr><th>Multiple Speakers</th><th>Single Speaker</th></tr></thead>
     <tbody><tr><td><audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/freevc_denoised_trunc_10_seconds.wav"></audio></td><td><audio controls src="media/cambridge_pub_recordings/pub_recordings/sample2_050723_183053/freevc_denoised_first_10_seconds.wav"></audio></td></tr></tbody>
