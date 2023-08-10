@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catchup 20230804</title>
+    <title>Catchup 20230811</title>
     <style>
         body {
             font-family: sans-serif;
@@ -27,7 +27,6 @@
 <body>
 <div>
     <h1>Current Audio Work</h1>
-    <p>There are no audio samples this week!</p>
     <div class="section">
         <h2>Denoiser Fine-Tuning</h2>
 
@@ -35,23 +34,46 @@
             processor for the transformer autoencoder).</p>
     </div>
     <div class="section">
-        <h2>Real-time streaming test harness</h2>
+        <h2>Low-latency Streaming Implementation</h2>
 
-        <p>Using the streaming test harness, we're looking at fixing issues that arise from streaming.</p>
+        <p>We're working on latency/receptive field issues that arise from streaming.</p>
         <p>The main issues identified are:</p>
-        <ul>
-            <li>"Glitches" at block boundaries;</li>
-            <li>Latency;</li>
-            <li>Short receptive field impacting transformer network output quality;</li>
-            <li>Short receptive field impacting speaker encoding network</li>
-        </ul>
-    </div>
-    <div class="section">
-        <h2>Additional Compute Workstations</h2>
+        <ol>
+            <li>"Clicks" at block boundaries;</li>
+            <li>High Latency/non causality;</li>
 
-        <p>Scan computers are building the new workstations. It will take two to three weeks for them to build and burn-in-test them.</p>
+        </ol>
+        <h3>1. Click removal:</h3>
+        <p>We've identified the clicks as an artefact of the decoder network (HifiGAN).  Output audio cannot simply be concatenated when the frame length is short.</p>
+        <p>We've been experimenting with using windowed overlapped frames to remove the clicks.</p>
+        <p>Using a simple audio->mel encoder feeding a decoder retrained on mel features (as opposed to transformer output) here are the results:</p>
+        <table>
+            <thead>
+            <tr>
+                <th>Frame Size 1024, no window</th>
+                <th>Frame Size 1024, windowed</th>
+                <th>Frame Size 12048, windowed</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><audio controls src="media/streaming/no_window.wav"></audio></td>
+                <td><audio controls src="media/streaming/windowed1024.wav"></audio></td>
+                <td><audio controls src="media/streaming/windowed2048.wav"></audio></td>
+            </tr>
+            </tbody>
+        </table>
+        <p>Although this improves the clicks, this is an not ideal solution, and increases latency.</p>
+        <p>We've begun work on a low-latency modification to the HifiGAN decoder based on <a href="https://arxiv.org/pdf/2206.07288.pdf">this paper</a>, (see below, 2) which should allow "seamless" joining of decoder output blocks, and also remove most of the latency.</p>
+        <h3>2. Latency Reduction</h3>
+        <p>In general, the solution to high-latency in audio neural networks is to cache previous outputs.  In the case of the encoder network, this requires a refactoring of the Transformer network. We'll be basing our work on based on <a href="https://arxiv.org/pdf/2302.13451.pdf">This paper from Dolby Labs</a>.</p>
+        <p>The decoder is simpler, and can be adapted.
+            In essence this requires pre-padding the inputs to every convolution with cached values from previous steps.
+            Implementing the decoder's convolution caches (and calculating their minimum sizes, which allows us to determine a final latency value for the decoder network) is the focus for next week.</p>
+
 
     </div>
+
     <hr/>
     <div>
         Previous catch-ups:
