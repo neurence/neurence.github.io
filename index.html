@@ -73,10 +73,10 @@
         <p>Although this improves the clicks, this is an not ideal solution, and increases latency.</p>
         <p>We've begun work on a low-latency modification to the HifiGAN decoder based on <a href="https://arxiv.org/pdf/2206.07288.pdf">this paper</a>, (see below, 2) which should allow "seamless" joining of decoder output blocks, and also remove most of the latency.</p>
         <h3>2. Latency Reduction</h3>
-        <p>In general, the solution to high-latency in audio neural networks is to cache previous outputs.  In the case of the encoder network, this requires a refactoring of the Transformer network. We'll be basing our work on based on <a href="https://arxiv.org/pdf/2302.13451.pdf">This paper from Dolby Labs</a>.</p>
+        <p>In general, the solution to high-latency in streaming audio neural networks is to cache previous input-layer and hidden-layer outputs.  In the case of the encoder network, this requires a refactoring of the Transformer network. We'll be basing our work on based on <a href="https://arxiv.org/pdf/2302.13451.pdf">This paper from Dolby Labs</a>.</p>
         <p>The decoder is simpler, and can be adapted.
-            In essence this requires pre-padding the inputs to every convolution with cached values from previous steps.
-            Implementing the decoder's convolution caches (and calculating their minimum sizes, which allows us to determine a final latency value for the decoder network) is the focus for next week.</p>
+            In essence this requires pre-padding the inputs to every convolution with cached values from previous steps.</p>
+        <p>Implementing the decoder's convolution caches is the focus for next week. (Once we've calculated all the cache sizes, we'll be able determine the theoretical minimum latency value for the decoder network). </p>
 
 
     </div>
@@ -93,7 +93,7 @@
 
     </div>
     <div>
-    <a href="#older">Older catch-ups:</a>
+        <a href="#older">Older catch-ups:</a>
         <div id="older">
             <a href="index_20230707.html">2023-07-07</a>
             <a href="index_20230630.html">2023-06-30</a>
