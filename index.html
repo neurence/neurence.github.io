@@ -17,6 +17,9 @@
             padding: 10px;
         }
 
+        div.center {
+            text-align: center;
+        }
         #older {
             display: none;
         }
@@ -39,18 +42,19 @@
 
         <p>Previously, we've done minimal modifications to the architectures of the encoder and decoder networks.</p>
         <p>We've done just enough to  repurpose the decoder (which was designed as a mel-to-audio converter) to handle transformer features rather than mel-spectrograms:</p>
-        <img src="media/img/hifi-gan-1.png" width="640">
+        <div class="center"><img src="media/img/hifi-gan-1.png" width="745"></div>
 
         <p>To make the pipeline work for realtime streaming we're digging deeper into the network architectures and making more significant changes:</p>
         <p>Each convolution and addition in the network requires a causal buffer of historical input.  Before summing or passing to downstream layers, the introduced delay needs to be accounted for. </p>
         <p>With the current architecture, this leads to a total latency of about 50 ms.</p>
-        <img src="media/img/hifi-gan-resnet-detail.png">
-        <p>The conversion to realtime streaming is still in progress. Here is some Audio output from the partially converted network with a frame (audio buffer) size of 1024 samples:</p>
+        <p>Below is a model graph showing a single residual block, which uses thirty causal buffers (not shown).  There are four of these blocks in the model.</p>
+        <div class="center"><img src="media/img/hifi-gan-resnet-detail.png" width="640"></div>
+        <p>The conversion to realtime streaming is still in progress. Here is some audio output from the partially converted network, trained on clean mel-spectrograms,  with a frame (audio buffer) size of 1536 samples:</p>
         <table>
             <thead>
             <tr>
-                <th>Frame Size 1024, Non-causal<br />(unmodified network)</th>
-                <th>Frame Size 1024, Causal<br />(modified network)</th>
+                <th>Frame Size 1536, Non-causal<br />(unmodified network)</th>
+                <th>Frame Size 1536, Causal<br />(modified network)</th>
             </tr>
             </thead>
             <tbody>
@@ -64,11 +68,11 @@
     </div>
 
     <div class="section">
-        <h2>Exporting Transformer Encoder</h2>
+        <h2>Porting The Encoder to a Mobile Device</h2>
 
-        <p>To prepare for adding the transformer encoder to a streaming pipeline, we have been doing experiments exporting the HuBERT transformer network into CoreML and ONNX formats, checking output precision and processing times. One of the versions of the encoder network we are currently working with is hubert-large-ll60k, which has hidden size of 1024, 16 attention heads and 24 hidden layers contributing to ~316M parameters.</p>
-        <img src="media/img/hubert_mlmodel_screenshot_fp16.png" width="840">
-        <p>Tests have been done using an iPhone 14 Pro, testing compatibility and performance of the different compute units (CPU, GPU and Neural Engine). There is an issue with on device processing using the Neural Engine, which is still being investigated. Currently we're investigating how to process the smaller frame sizes without loss of quality due to receptive field size.</p>
+        <p>To prepare for adding the transformer encoder to a streaming pipeline, we've exported the HuBERT transformer network into both CoreML and ONNX formats, checking output precision and processing times. One of the versions of the encoder network we are currently working with is hubert-large-ll60k, which has hidden size of 1024, 16 attention heads and 24 hidden layers contributing to ~316M parameters.</p>
+        <div class="center"><img src="media/img/hubert_mlmodel_screenshot_fp16.png" width="915"></div>
+        <p>We're testing on an iPhone 14 Pro for compatibility, and for performance of the different compute units (CPU, GPU and Neural Engine). There is an issue with on device processing using the Neural Engine, which is still being investigated. Currently, we're investigating how to process the smaller frame sizes without loss of output quality arising from the smaller receptive field size.</p>
         <table>
             <tr>
                 <th>Frame Time (secs)&nbsp;&nbsp;</th>
@@ -115,10 +119,15 @@
         </table>
     </div>
 
+    <h1>Targets for next week:</h1>
+    <ul>
+        <li>Porting the Decoder to a mobile device</li>
+        <li>Training the modified Decoder network from scratch using the full denoising pipeline</li>
+    </ul>
     <hr/>
     <div>
         Recent catch-ups:
-        <a href="index_20230811.html">2023-08-04</a>
+        <a href="index_20230811.html">2023-08-11</a>
         <a href="index_20230804.html">2023-08-04</a>
     </div>
     <div>
