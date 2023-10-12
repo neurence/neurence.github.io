@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catchup 20231006</title>
+    <title>Catchup 20231013</title>
     <style>
         body {
             font-family: sans-serif;
@@ -37,9 +37,17 @@
             text-align: right;
             border: 1px solid gray;
         }
+        .bordered {
+            border: 1px solid gray;
+        }
 
         .bad {
+            font-weight: bold;
             color: red;
+        }
+        .good {
+            font-weight: bold;
+            color: #035d03;
         }
         th.highlight {}
 
@@ -48,17 +56,17 @@
 <body>
 <div>
     <div class="section">
-        <h2>iOS Test App autoencoder benchmarks and analysis</h2>
-        <p>Here are the processing timings for the iOS test application using non-causal encoder and causal decoder on an iPhone 11 Pro.</p>
-        <p>The first set of timings use a 16000 sample (1s) input buffer for the autoencoder.</p>
-        <p>The second set of timings are for a 6400 sample (0.4s) buffer.</p>
-        <p>The third set of timings are for a 3200 sample (0.2s) buffer.</p>
-        <p>All the timings are averaged over 1 minute.</p>
+        <h2>iOS autoencoder Latency Reduction</h2>
+        <a>We've implemented a short-buffer autoencoder on the iPhone which can utilize  the high-end iPhone's A11 neural engine. This has led to significant speed improvements.</a>
+        <p>Here are the processing timings for the iOS test application using non-causal encoder and non-causal decoder on an iPhone 15 Pro and iPhone 11 Pro.</p>
+        <p>The timings are for a 3200 sample buffer (200ms).</p>
+        <p>Based on the results of our earlier experiments, block sizes below 3200 degrade the output  due to its inherent latency (of around 200ms @ 16k)</p>
 
         <table>
             <thead>
             <tr>
-                <th>Input Size (samps)</th>
+                <th>Device</th>
+                <th>Compute Backend</th>
                 <th>Encoder Time (ms)</th>
                 <th>Decoder Time (ms)</th>
                 <th>Total autoencoding time</th>
@@ -66,278 +74,63 @@
             </tr>
             </thead>
             <tbody>
-            <img>
+
             <tr>
-                <td class="num">16000</td>
-                <td class="num">407.8</td>
-                <td class="num">157.7</td>
-                <td class="num">565.5</td>
-                <td class="num">1.768</td>
-            </tr>
-            <tr>
-                <td class="num">6400</td>
-                <td class="num">204.7</td>
-                <td class="num">98.8</td>
-                <td class="num">303.5</td>
-                <td class="num">1.318</td>
-            </tr>
-            <tr>
-                <td class="num">3200</td>
+                <td class="bordered">iPhone 11 Pro</td>
+                <td class="bordered">CPU</td>
                 <td class="num">193.9</td>
                 <td class="num">27.0</td>
                 <td class="num">220.9</td>
                 <td class="num bad">.905</td>
             </tr>
+            <tr>
+                <td class="bordered">iPhone 15 Pro</td>
+                <td class="bordered">CPU</td>
+                <td class="num">71.2</td>
+                <td class="num">8.4</td>
+                <td class="num">88.3</td>
+                <td class="num good">2.26</td>
+            </tr>
+            <tr>
+                <td class="bordered">iPhone 15 Pro</td>
+                <td class="bordered">CPU+GPU</td>
+                <td class="num">74.3</td>
+                <td class="num">14.3</td>
+                <td class="num">97.3</td>
+                <td class="num good">2.05</td>
+            </tr>
+            <tr>
+                <td class="bordered">iPhone 15 Pro</td>
+                <td class="bordered">CPU+NEURAL ENGINE</td>
+                <td class="num">26.4</td>
+                <td class="num">11.8</td>
+                <td class="num">71.5</td>
+                <td class="num good">2.80</td>
+            </tr>
             </tbody>
         </table>
-        <div>
-            <img src="media/img/AutoencoderTiming.png">
-        </div>
+        <p>The above results mean that, for a high-end iPhone, latency reduction can be achieved by
+            <strong>frame-overlapping</strong>.  Taking the best-performing case, where the both CPU and the built-in A11 neural engine are used, neural network latency can be more reduced by well over 50% to under 100ms.  This is our current work on latency reduction.</p>
+        <p> </p>
 
-        <p>Here is a recording using denoiser and autoencoder with one second input length:</p>
-        <p>Input</p>
-        <audio controls src="media/test_ios_app_io/recordingInput_220923_123901.wav"></audio>
-        <p>Output</p>
-        <audio controls src="media/test_ios_app_io/recording_220923_123901.wav"></audio>
     </div>
     <div class="section">
-        <h2>Low-latency autoencoder work</h2>
-        <p>We've begin work on latency reduction in the encoder (Hubert/Wav2Vec2) network.  This is a large and complex network, but basically consists of two modules:</p>
-        <ul>
-            <li>A latent feature encoder;</li>
-            <li>A content transformer</li>
-        </ul>
-        <p>The latent feature encoder is a relatively straightforward convolutional network, which transforms blocks of audio into feature "frames". It adds some (~50 ms) latency to the network, and is non-causal in its design. As an initial step, we're transforming this into a fully causal network.</p>
-        <p>The content transformer is non-streaming in its design, and significant structural changes are required to make it effectively streamable with low latency.</p>
+        <h2>Low-latency Encoder</h2>
+         <p>The encoder is non-streaming in its design, and significant structural changes are required to make it effectively streamable with low latency.</p>
         <p>This is being done in three stages:</p>
         <ul>
-            <li>The first stage is simply to feed overlapped windowed frames into the network.  It will do unnecessary work "recalculating" the overlapped segments, but, providing processing power is sufficient, this will lower its latency. </li>
+            <li>The first stage (currently in progress) is simply to feed overlapped windowed frames into the network.  It will do unnecessary work "recalculating" the overlapped segments, but, providing processing power is sufficient, this will lower its latency. </li>
             <li>The second stage is to reduce acausality by shifting the window center, reducing the number of "lookahead" frames relative to past frames. This will be the main focus of the latency reduction task next week.</li>
             <li>The third stage is to remove the latency further by converting the attention blocks to "LLSA" blocks, which calculate multiple shifted outputs, which provide  lookahead results for downstream attention blocks.  .</li>
 
         </ul>
-        <p>The figures below show the above "streamifying" stages.</p>
-        <figure>
-            <img src="media/img/2302_1.jpg" width="1024">
-            <figcaption><strong>Acausal attention</strong></figcaption>
-        </figure>
-        <figure>
-            <img src="media/img/2302_2.jpg" width="1024">
-            <figcaption><strong>Streaming attention</strong></figcaption>
-        </figure>
-        <figure>
-            <img src="media/img/2302_3.jpg" width="1024">
-            <figcaption><strong>Low-Latency Streaming attention (LLSA)</strong></figcaption>
-        </figure>
-
-    </div>
-    <div class="section">
-        <h2>Latent feature prediction</h2>
-
-        <p>Our goal here is to take encoded (non-causal) audio features and, using a simple neural network, estimate features at a later point in time. </p>
-        <p>We are not actually predicting the future, but rather extracting information we know to be encoded in the features from a short time ahead of their nominal time step. </p>
-        <p>Features therefore become available to the decoder earlier, thus reducing latency at a cost of the loss of some accuracy.</p>
-        <p>The assumption is that due to the limits of human speech, the features themselves should be smooth and have low magnitude gradients w.r.t. time.</p>
-        <p>New features are generated by predicting a residual from the latest available feature vector. </p>
-
-
-        <table>
-
-            <tbody>
-            <tr><td colspan="3"><h3>Original feature frames (target)</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/original/gen0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/original/gen1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/original/gen3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/original/gen5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/original/gen7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/original/gen10.wav"></audio>
-                </td>
-            </tr>
-
-            </tbody>
-            </thead>
-            <tbody>
-            <tr><td colspan="3"><h3>test_1_n1    - Predict next frame from current frame (look ahead 20ms)</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_1_n1_10000/eval/pred0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_1_n1_10000/eval/pred1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_1_n1_10000/eval/pred3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_1_n1_10000/eval/pred5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_1_n1_10000/eval/pred7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_1_n1_10000/eval/pred10.wav"></audio>
-                </td>
-            </tr>
-
-            </tbody>
-
-            <tbody>
-            <tr><td colspan="3"><h3>test_2_n6    - Predict frame + 6 indirectly, by framewise prediction (look ahead 120ms)</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n6_11000/eval/pred0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n6_11000/eval/pred1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n6_11000/eval/pred3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n6_11000/eval/pred5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n6_11000/eval/pred7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n6_11000/eval/pred10.wav"></audio>
-                </td>
-            </tr>
-
-            </tbody>
-            </thead>
-            <tbody>
-            <tr><td colspan="3"><h3>test_2_n9    - Predict frame + 9 indirectly, by framewise prediction (look ahead 180ms). <br>This is about the limit of recognisable speech, after which it becomes unstructured babble.</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n9_592000/eval/pred0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n9_592000/eval/pred1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n9_592000/eval/pred3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n9_592000/eval/pred5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n9_592000/eval/pred7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_2_n9_592000/eval/pred10.wav"></audio>
-                </td>
-            </tr>
-
-            </tr>
-            </thead>
-            <tbody>
-            <tr><td colspan="3"><h3>test_5_m3_n3    - Predict frame + 3 based on previous 3 frames (look ahead 60ms)</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m3_n3_25000/eval/pred0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m3_n3_25000/eval/pred1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m3_n3_25000/eval/pred3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m3_n3_25000/eval/pred5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m3_n3_25000/eval/pred7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m3_n3_25000/eval/pred10.wav"></audio>
-                </td>
-            </tr>
-
-            </tr>
-            </thead>
-            <tbody>
-            <tr><td colspan="3"><h3>test_5_m4_n4    - Predict frame + 4 based on previous 4 frames (look ahead 80ms)</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m4_n4_23000/eval/pred0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m4_n4_23000/eval/pred1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m4_n4_23000/eval/pred3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m4_n4_23000/eval/pred5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m4_n4_23000/eval/pred7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m4_n4_23000/eval/pred10.wav"></audio>
-                </td>
-            </tr>
-
-            </tr>
-            </thead>
-            <tbody>
-            <tr><td colspan="3"><h3>test_5_m5_n5    - Predict frame + 5 based on previous 5 frames (look ahead 100ms)</h3></td></tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m5_n5_10000/eval/pred0.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m5_n5_10000/eval/pred1.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m5_n5_10000/eval/pred3.wav"></audio>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m5_n5_10000/eval/pred5.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m5_n5_10000/eval/pred7.wav"></audio>
-                </td>
-                <td>
-                    <audio controls src="media/feature_prediction/test_5_m5_n5_10000/eval/pred10.wav"></audio>
-                </td>
-            </tr>
-
-            </tbody>
-        </table>
 
     </div>
     <hr/>
 
     <div>
         Recent catch-ups:
+        <a href="index_20231006.html">2023-10-06</a>
         <a href="index_20230922.html">2023-09-22</a>
         <a href="index_20230908.html">2023-09-08</a>
         <a href="index_20230825.html">2023-08-25</a>
