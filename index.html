@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catchup 20231020</title>
+    <title>Catchup 20240517</title>
     <style>
         body {
             font-family: sans-serif;
@@ -56,32 +56,70 @@
 <body>
 <div>
     <div class="section">
-        <h2>Prediction network performance with Hubert/WavLM encoder</h2>
-        <p>Here are audio samples showing comparative output of WavLM and Hubert encoders, with and without the prediction network.</p>
-        <p>The latency of the networks are the same, but produce different audio quality, particularly with the predictor network.</p>
+        <h2>App performance with different EQ settings</h2>
+        <p>Here are audio samples showing comparative output of the app with different EQ applied to the input.</p>
+        <p>There is no discernible difference in the outputs.</p>
 
         <table>
             <thead>
             <tr>
-                <th>Encoder</th>
-                <th>Without Prediction</th>
-                <th>With Prediction</th>
-
+                <th>EQ</th>
+                <th>Input</th>
+                <th>Output</th>
             </tr>
             </thead>
             <tbody>
-
             <tr>
-                <td>Hubert</td>
-                <td><audio controls src="media/prediction_encoder_choices/hubert/test_hubert_16000_hifigan_valid_female_clean_000.wav"></audio></td>
-                <td><audio controls src="media/prediction_encoder_choices/hubert/test_hubert_pred_16000_hifigan_valid_female_clean_000.wav"></audio></td>
+                <td>Flat</td>
+                <td><audio controls src="media/eq_test/josh_near_far_flat.wav"></audio></td>
+                <td><audio controls src="media/eq_test/processed_josh_near_far_flat.wav"></audio></td>
             </tr>
             <tr>
-                <td>WavLM</td>
-                <td><audio controls src="media/prediction_encoder_choices/wavlm/test_wavlm_16000_hifigan_valid_female_clean_000.wav"></audio></td>
-                <td><audio controls src="media/prediction_encoder_choices/wavlm/test_wavlm_pred_16000_hifigan_valid_female_clean_000.wav"></audio></td>
+                <td>Phone (emulated)</td>
+                <td><audio controls src="media/eq_test/josh_near_far_phone_emu.wav"></audio></td>
+                <td><audio controls src="media/eq_test/processed_josh_near_far_phone_emu.wav"></audio></td>
             </tr>
+            <tr>
+                <td>TV Speaker</td>
+                <td><audio controls src="media/eq_test/josh_near_far_tv_emu.wav"></audio></td>
+                <td><audio controls src="media/eq_test/processed_josh_near_far_tv_emu.wav"></audio></td>
+            </tr>
+            <tr>
+                <td>RIAA playback compensation</td>
+                <td><audio controls src="media/eq_test/josh_near_far_vinyl_emu.wav"></audio></td>
+                <td><audio controls src="media/eq_test/processed_josh_near_far_vinyl_emu.wav"></audio></td>
+            </tr>
+            </tbody>
+        </table>
 
+    </div>
+    <div class="section">
+        <h2>Directionality Test</h2>
+        <p>Charlotte and James sitting on a sofa facing each other, with a 1.5m distance between them, both using the app.</p>
+        <p>There was low-level background noise from the TV, which was ninety degrees to the side of the phones.</p>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Suppressed Speaker</th>
+                <th>Target Speaker</th>
+                <th>Input</th>
+                <th>Output</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Charlotte</td>
+                <td>James</td>
+                <td><audio controls src="media/charlotte_james_dual/i14_I_080524_171459.wav"></audio></td>
+                <td><audio controls src="media/charlotte_james_dual/i14_O_080524_171459.wav"></audio></td>
+            </tr>
+            <tr>
+                <td>James</td>
+                <td>Charlotte</td>
+                <td><audio controls src="media/charlotte_james_dual/i15_I_080524_171458.wav"></audio></td>
+                <td><audio controls src="media/charlotte_james_dual/i15_O_080524_171458.wav"></audio></td>
+            </tr>
             </tbody>
         </table>
 
@@ -89,7 +127,8 @@
     <hr/>
 
     <div>
-        Recent catch-ups:
+        Previous catch-ups:
+        <a href="index_20231020.html">2023-10-20</a>
         <a href="index_20231013.html">2023-10-13</a>
         <a href="index_20231006.html">2023-10-06</a>
         <a href="index_20230922.html">2023-09-22</a>
