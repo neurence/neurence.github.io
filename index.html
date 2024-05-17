@@ -35,7 +35,7 @@
 
         .num {
             text-align: right;
-            border: 1px solid gray;
+            /*border: 1px solid gray;*/
         }
         .bordered {
             border: 1px solid gray;
@@ -150,7 +150,49 @@
         </table>
 
     </div>
+    <div class="section">
+        <h2>Gain Tests</h2>
+        <p>Recording of Charlotte's TV at 1m and 3m, with various gains applied to the input.</p>
+        <p>The 3m test starts at around 27 seconds.</p>
+        Input file: <audio controls src="media/tv_test/i15_I_080524_165705.wav"></audio>
+        <table>
+            <thead>
+            <tr>
+                <th>Gain</th>
+                <th>Output</th>
+                <th>Gain</th>
+                <th>Output</th>
+                <th>Gain</th>
+                <th>Output</th>
+                <th>Gain</th>
+                <th>Output</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="num">1</td>
+                <td><audio controls src="media/gain_test/gain_testx01.wav"></audio></td>
+                <td class="num">2</td>
+                <td><audio controls src="media/gain_test/gain_testx02.wav"></audio></td>
+                <td class="num">4</td>
+                <td><audio controls src="media/gain_test/gain_testx04.wav"></audio></td>
+                <td class="num">8</td>
+                <td><audio controls src="media/gain_test/gain_testx08.wav"></audio></td>
+            </tr>
+            <tr>
+                <td class="num">16</td>
+                <td><audio controls src="media/gain_test/gain_testx16.wav"></audio></td>
+                <td class="num">32</td>
+                <td><audio controls src="media/gain_test/gain_testx32.wav"></audio></td>
+                <td class="num">64</td>
+                <td><audio controls src="media/gain_test/gain_testx64.wav"></audio></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
 
+    </div>
     <hr/>
 
     <div>
