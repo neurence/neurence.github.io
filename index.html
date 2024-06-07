@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catchup 20240517</title>
+    <title>Catchup 20240607</title>
     <style>
         body {
             font-family: sans-serif;
@@ -56,158 +56,164 @@
 <body>
 <div>
     <div class="section">
-        <h2>App performance with different EQ settings</h2>
-        <p>Here are audio samples showing comparative output of the app with different EQ applied to the input.</p>
-        <p>There is no discernible difference in the outputs.</p>
+        <h2>Comparison of outputs with/without pre-denoising</h2>
+        <p>We've been training reduced latency versions of the encoder, and also different datasets/data augmentations:</p>
+        <h4>
+        <ul>
+        <li>WavLM Large (pre-encoder + 24 Transformer Layers, which is what's currently implemented in the phone)</li>
+        <li>WavLM pre-encoder only (No Transformer layers, reduced latency) </li>
+        <li>WavLM Base+ (pre-encoder + 12 Transformer Layers, reduced latency) </li>
+        <li>WavLM Large (pre-encoder + 24 Transformer Layers), trained with speed augmentation</li>
+        <li>WavLM Large (pre-encoder + 24 Transformer Layers), trained with the <a href="https://commonvoice.mozilla.org/en/datasets">Mozilla CV Corpus</a>, a massive crowdsourced speech dataset (5,000 hours of low-quality speech) </li>
+    </ul>
+        </h4>
 
         <table>
             <thead>
             <tr>
-                <th>EQ</th>
-                <th>Input</th>
-                <th>Output</th>
+                <th class="good">Description</th>
+
+                <th>Sample 1</th>
+                <th>Sample 2</th>
+                <th>Sample 3</th>
+                <th>Sample 4</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td>Flat</td>
-                <td><audio controls src="media/eq_test/josh_near_far_flat.wav"></audio></td>
-                <td><audio controls src="media/eq_test/processed_josh_near_far_flat.wav"></audio></td>
+                <td  class="good">Original Input</td>
+
+                <td><audio controls src="media/files_for_mike_070624/orig/charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/orig/charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/orig/conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/orig/pub_stewart_20230621_real_medium.wav"></audio></td>
             </tr>
             <tr>
-                <td>Phone (emulated)</td>
-                <td><audio controls src="media/eq_test/josh_near_far_phone_emu.wav"></audio></td>
-                <td><audio controls src="media/eq_test/processed_josh_near_far_phone_emu.wav"></audio></td>
+                <td  class="good">Pre-Denoised Only</td>
+
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><h3>WaveLM Large</h3></h4></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td  class="good">WavLM Large</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
             </tr>
             <tr>
-                <td>TV Speaker</td>
-                <td><audio controls src="media/eq_test/josh_near_far_tv_emu.wav"></audio></td>
-                <td><audio controls src="media/eq_test/processed_josh_near_far_tv_emu.wav"></audio></td>
+                <td  class="good">WavLM Large + 50% pre-denoised</td>
+
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
             </tr>
             <tr>
-                <td>RIAA playback compensation</td>
-                <td><audio controls src="media/eq_test/josh_near_far_vinyl_emu.wav"></audio></td>
-                <td><audio controls src="media/eq_test/processed_josh_near_far_vinyl_emu.wav"></audio></td>
+                <td  class="good">WavLM Large + full pre-denoised</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><h3>WavLM Pre-encoder</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td  class="good">WavLM Pre-encoder Only</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr>
+                <td  class="good">WavLM Pre-encoder Only + 50% pre-denoised</td>
+
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr>
+                <td  class="good">WavLM Pre-encoder Only + full pre-denoised</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><h3>WaveLM Base+</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td  class="good">WavLM Base+</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr>
+                <td  class="good">WavLM Base+ + 50% pre-denoised</td>
+
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr>
+                <td  class="good">WavLM Base+ + full pre-denoised</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
+            </tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><h3>WavLM (speed augmentation)</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td  class="good">WavLM Large w/speed augmentation</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/charlotte_restaurant_french_babble_16k_hard_io_infer_x4_output.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/charlotte_train_real_16k_medium_io_infer_x4_output.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/conversation_deb0_stewart180_real_easy_io_infer_x4_output.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/pub_stewart_20230621_real_medium_io_infer_x4_output.wav"></audio></td>
+            </tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><h3>WavLM (CV Corpus)</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td  class="good">WavLM Large (CV Corpus)</td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
+                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
             </tr>
             </tbody>
         </table>
 
     </div>
-    <div class="section">
-        <h2>Directionality Test</h2>
-        <p>Charlotte and James sitting on a sofa facing each other, with a 1.5m distance between them, both using the app.</p>
-        <p>There was low-level background noise from the TV, which was ninety degrees to the side of the phones.</p>
 
-        <table>
-            <thead>
-            <tr>
-                <th>Suppressed Speaker</th>
-                <th>Target Speaker</th>
-                <th>Input</th>
-                <th>Output</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Charlotte</td>
-                <td>James</td>
-                <td><audio controls src="media/charlotte_james_dual/i14_I_080524_171459.wav"></audio></td>
-                <td><audio controls src="media/charlotte_james_dual/i14_O_080524_171459.wav"></audio></td>
-            </tr>
-            <tr>
-                <td>James</td>
-                <td>Charlotte</td>
-                <td><audio controls src="media/charlotte_james_dual/i15_I_080524_171458.wav"></audio></td>
-                <td><audio controls src="media/charlotte_james_dual/i15_O_080524_171458.wav"></audio></td>
-            </tr>
-            </tbody>
-        </table>
-
-    </div>
-    <div class="section">
-        <h2>TV Test</h2>
-        <p>Recording of Charlotte's TV at 1m and 3m.</p>
-        <table>
-            <thead>
-            <tr>
-                <th>Phone</th>
-                <th>Input</th>
-                <th>Output</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>i15 Pro</td>
-                <td><audio controls src="media/tv_test/i15_I_080524_165705.wav"></audio></td>
-                <td><audio controls src="media/tv_test/i15_O_080524_165705.wav"></audio></td>
-            </tr>
-            <tr>
-                <td>i14 Pro</td>
-                <td><audio controls src="media/tv_test/i14_I_080524_165705.wav"></audio></td>
-                <td><audio controls src="media/tv_test/i14_O_080524_165705.wav"></audio></td>
-            </tr>
-            </tbody>
-        </table>
-
-    </div>
-    <div class="section">
-        <h2>Gain Tests</h2>
-        <p>Recording of Charlotte's TV at 1m and 3m, with various gains applied to the input.</p>
-        <p>The 3m test starts at around 27 seconds.</p>
-        Input file: <audio controls src="media/tv_test/i15_I_080524_165705.wav"></audio>
-        <table>
-            <thead>
-            <tr>
-                <th>Gain</th>
-                <th>Output</th>
-                <th>Gain</th>
-                <th>Output</th>
-                <th>Gain</th>
-                <th>Output</th>
-                <th>Gain</th>
-                <th>Output</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td class="num">1</td>
-                <td><audio controls src="media/gain_test/gain_testx01.wav"></audio></td>
-                <td class="num">2</td>
-                <td><audio controls src="media/gain_test/gain_testx02.wav"></audio></td>
-                <td class="num">4</td>
-                <td><audio controls src="media/gain_test/gain_testx04.wav"></audio></td>
-                <td class="num">8</td>
-                <td><audio controls src="media/gain_test/gain_testx08.wav"></audio></td>
-            </tr>
-            <tr>
-                <td class="num">16</td>
-                <td><audio controls src="media/gain_test/gain_testx16.wav"></audio></td>
-                <td class="num">32</td>
-                <td><audio controls src="media/gain_test/gain_testx32.wav"></audio></td>
-                <td class="num">64</td>
-                <td><audio controls src="media/gain_test/gain_testx64.wav"></audio></td>
-                <td></td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-
-    </div>
     <hr/>
 
     <div>
         Previous catch-ups:
+        <a href="index_20240517.html">2024-05-17</a>
         <a href="index_20231020.html">2023-10-20</a>
         <a href="index_20231013.html">2023-10-13</a>
         <a href="index_20231006.html">2023-10-06</a>
         <a href="index_20230922.html">2023-09-22</a>
         <a href="index_20230908.html">2023-09-08</a>
-        <a href="index_20230825.html">2023-08-25</a>
+
 
     </div>
     <div>
         <a href="#older">Older catch-ups:</a>
         <div id="older">
+            <a href="index_20230825.html">2023-08-25</a>
             <a href="index_20230818.html">2023-08-18</a>
             <a href="index_20230811.html">2023-08-11</a>
             <a href="index_20230804.html">2023-08-04</a>
