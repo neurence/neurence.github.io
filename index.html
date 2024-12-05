@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Catchup 20240607</title>
+    <title>Catchup 20241205</title>
     <style>
         body {
             font-family: sans-serif;
@@ -56,151 +56,982 @@
 <body>
 <div>
     <div class="section">
-        <h2>Comparison of outputs with/without pre-denoising</h2>
-        <p>We've been training reduced latency versions of the encoder, and also different datasets/data augmentations:</p>
-        <h4>
+        <h2>Integrating benchmarking into the development process</h2>
+        <p>
+            We're working on integrating benchmarking into our development process to ensure that our models are performing optimally and to track improvements over time.</p>
+        <p>
+            After each iteration, we run our pipeline on a set of benchmark datasets and compare the results to a reference dataset to evaluate the performance of the model.
+            We also compare the performance of different models against each other to identify whether a new model is an improvement over the previous one.
+            This is done entirely in Python, using a single script, i.e. without deploying the model to the iPhone.
+            This means that, although the benchmarking is very useful, it is not a perfect representation of the performance of the model on the iPhone, and user testing is still required.
+        </p>
+    </div>
+    <div class="section">
+        <h2>Benchmark Datasets</h2>
+        <p>We've been working on our benchmarking datasets of recorded speech.</p>
+        <h3>
+        We've created audio/transcript datasets for the following use cases:
+        </h3>
         <ul>
-        <li>WavLM Large (pre-encoder + 24 Transformer Layers, which is what's currently implemented in the phone)</li>
-        <li>WavLM pre-encoder only (No Transformer layers, reduced latency) </li>
-        <li>WavLM Base+ (pre-encoder + 12 Transformer Layers, reduced latency) </li>
-        <li>WavLM Large (pre-encoder + 24 Transformer Layers), trained with speed augmentation</li>
-        <li>WavLM Large (pre-encoder + 24 Transformer Layers), trained with the <a href="https://commonvoice.mozilla.org/en/datasets">Mozilla CV Corpus</a>, a massive crowdsourced speech dataset (5,000 hours of low-quality speech) </li>
-    </ul>
-        </h4>
+            <li><strong>Bar/Crowd noise.</strong><p>This is the main use case, a conversation in a public place with other people speaking nearby.</p></li>
+            <li><strong>TV as unwanted background.</strong><p>A conversation indoors with a TV/radio on in the background.</p></li>
+            <li><strong>TV speech.</strong><p>A TV, which you're trying to listen to, with home noises.</p></li>
+            <li><strong>Indoors home</strong><p>A conversation, with home noises (transients and continuous).</p></li>
+            <li><strong>Indoors transport</strong><p>A conversation in a car/train/plane (continuous).</p></li>
+            <li><strong>Indoors quiet</strong><p>A conversation in a quiet room.</p></li>
+            <li><strong>Unwanted music (without vocals)</strong><p>A conversation indoors, with unwanted background music.</p></li>
+        </ul>
+        For each of the datasets, we've created a reference dataset, representing the ideal output.
 
-        <table>
-            <thead>
-            <tr>
-                <th class="good">Description</th>
-
-                <th>Sample 1</th>
-                <th>Sample 2</th>
-                <th>Sample 3</th>
-                <th>Sample 4</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td  class="good">Original Input</td>
-
-                <td><audio controls src="media/files_for_mike_070624/orig/charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/orig/charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/orig/conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/orig/pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">Pre-Denoised Only</td>
-
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr ><td><h3>WavLM Large</h3></h4></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr style="background-color: azure"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr>
-                <td  class="good">WavLM Large</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_currtestflight_autoencoder_wavlmlarge_340k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">WavLM Large + 50% pre-denoised</td>
-
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmlarge_340k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">WavLM Large + full pre-denoised</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmlarge_340k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-
-            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td><h3>WavLM Pre-encoder</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr  style="background-color: azure"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr>
-                <td  class="good">WavLM Pre-encoder Only</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_conv_only_500k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">WavLM Pre-encoder Only + 50% pre-denoised</td>
-
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_conv_only_500k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">WavLM Pre-encoder Only + full pre-denoised</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_conv_only_500k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td><h3>WaveLM Base+</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr  style="background-color: azure"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr>
-                <td  class="good">WavLM Base+</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_autoencoder_wavlmbaseplus_1000k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">WavLM Base+ + 50% pre-denoised</td>
-
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoisemix0.5_autoencoder_wavlmbaseplus_1000k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr>
-                <td  class="good">WavLM Base+ + full pre-denoised</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_wavlmbaseplus_1000k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td><h3>WavLM (speed augmentation)</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr  style="background-color: azure"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr>
-                <td  class="good">WavLM Large w/speed augmentation</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/charlotte_restaurant_french_babble_16k_hard_io_infer_x4_output.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/charlotte_train_real_16k_medium_io_infer_x4_output.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/conversation_deb0_stewart180_real_easy_io_infer_x4_output.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_gold_plus_speed_wavlmlarge_510k/pub_stewart_20230621_real_medium_io_infer_x4_output.wav"></audio></td>
-            </tr>
-            <tr><td>-</td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr><td><h3>WavLM (CV Corpus)</h3></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr  style="background-color: azure"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-            <tr>
-                <td  class="good">WavLM Large (CV Corpus)</td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_charlotte_restaurant_french_babble_16k_hard.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_charlotte_train_real_16k_medium.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_conversation_deb0_stewart180_real_easy.wav"></audio></td>
-                <td><audio controls src="media/files_for_mike_070624/processed_denoised_autoencoder_cv_corpus_320k/processed_pub_stewart_20230621_real_medium.wav"></audio></td>
-            </tr>
-            </tbody>
-        </table>
+        Running the benchmark on each of these datasets without any noise reduction (i.e. not using the app) gives us a baseline.
 
     </div>
+    <div class="section">
+        <h2>Benchmark Metrics</h2>
+        <p>The metrics we're using initially are:</p>
+        <ul>
+            <li><strong>PESQ (Perceptual Evaluation of Speech Quality)</strong></li><p>PESQ is a widely used metric for assessing the quality of speech as perceived by human listeners. It compares the original and degraded speech signals to provide a score between -0.5 and 4.5, with higher scores indicating better quality</p>
+            <li><strong>STOI (Short-Time Objective Intelligibility)</strong></li><p>STOI measures the intelligibility of speech, particularly in noisy environments. It compares the clean and degraded speech signals to provide a score between 0 and 1, with higher scores indicating better intelligibility</p>
+            <li><strong>WER (Word Error Rate)</strong><p>WER  calculates the ratio of errors (substitutions, insertions, and deletions) in the transcribed text to the total number of words in the reference text. A lower WER indicates better accuracy in recognizing speech</p></li>
+            <li><strong>SI/SNR (Scale-Invariant Signal-to-Noise Ratio)</strong><p>This measures the quality of audio by comparing the clean and degraded signals. It calculates the ratio of the signal power to the noise power, adjusted to be invariant to the scale of the signals. Higher SI/SNR values indicate better audio quality</p></li>
+        </ul>
+    </div>
+    <div class="section">
+        <h2>Benchmark  summary log table</h2>
 
+        <style id="Benchmark_23528_Styles">
+            <!--table
+            {mso-displayed-decimal-separator:"\.";
+
+                .xl1523528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+
+
+                    white-space:nowrap;}
+                .xl6323528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    background:#83CCEB;
+
+                    white-space:nowrap;}
+                .xl6423528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+
+
+                    white-space:nowrap;}
+                .xl6523528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:14.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+
+
+                    white-space:nowrap;}
+                .xl6623528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#F1A983;
+
+                    white-space:nowrap;}
+                .xl6723528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#83CCEB;
+
+                    white-space:nowrap;}
+                .xl6823528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#94DCF8;
+
+                    white-space:nowrap;}
+                .xl6923528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#CAEDFB;
+
+                    white-space:nowrap;}
+                .xl7023528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#83CCEB;
+
+                    white-space:nowrap;}
+                .xl7123528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#94DCF8;
+
+                    white-space:nowrap;}
+                .xl7223528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#CAEDFB;
+
+                    white-space:nowrap;}
+                .xl7323528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#F1A983;
+
+                    white-space:nowrap;}
+                .xl7423528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#F1A983;
+
+                    white-space:nowrap;}
+                .xl7523528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#83CCEB;
+
+                    white-space:nowrap;}
+                .xl7623528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#94DCF8;
+
+                    white-space:nowrap;}
+                .xl7723528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:14.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#F1A983;
+
+                    white-space:nowrap;}
+                .xl7823528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:14.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#CAEDFB;
+
+                    white-space:nowrap;}
+                .xl7923528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:14.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border:.5pt solid windowtext;
+                    background:#CAEDFB;
+
+                    white-space:nowrap;}
+                .xl8023528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:700;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border-top:.5pt solid windowtext;
+                    border-right:none;
+                    border-bottom:.5pt solid windowtext;
+                    border-left:.5pt solid windowtext;
+                    background:#CAEDFB;
+
+                    white-space:nowrap;}
+                .xl8123528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border-top:.5pt solid windowtext;
+                    border-right:none;
+                    border-bottom:.5pt solid windowtext;
+                    border-left:none;
+
+
+                    white-space:nowrap;}
+                .xl8223528
+                {padding-top:1px;
+                    padding-right:1px;
+                    padding-left:1px;
+
+                    color:black;
+                    font-size:9.0pt;
+                    font-weight:400;
+                    font-style:normal;
+                    text-decoration:none;
+                    font-family:"Aptos Narrow", sans-serif;
+
+
+                    text-align:center;
+                    vertical-align:bottom;
+                    border-top:.5pt solid windowtext;
+                    border-right:.5pt solid windowtext;
+                    border-bottom:.5pt solid windowtext;
+                    border-left:none;
+
+
+                    white-space:nowrap;}
+            -->}
+        </style>
+        <div id="Benchmark_23528" align=center>
+
+            <table border=0 cellpadding=0 cellspacing=0 width=1092 style='border-collapse:
+ collapse;table-layout:fixed;width:815pt'>
+                <col class=xl6323528 width=114 style='mso-width-source:userset;mso-width-alt:
+ 3874;width:85pt'>
+                <col class=xl6323528 width=34 style='mso-width-source:userset;mso-width-alt:
+ 1143;width:25pt'>
+                <col width=141 style='mso-width-source:userset;mso-width-alt:4812;width:106pt'>
+                <col width=83 style='mso-width-source:userset;mso-width-alt:2833;width:62pt'>
+                <col width=105 span=2 style='mso-width-source:userset;mso-width-alt:3584;
+ width:79pt'>
+                <col width=57 style='mso-width-source:userset;mso-width-alt:1928;width:42pt'>
+                <col width=52 style='mso-width-source:userset;mso-width-alt:1757;width:39pt'>
+                <col width=125 style='mso-width-source:userset;mso-width-alt:4249;width:93pt'>
+                <col width=39 style='mso-width-source:userset;mso-width-alt:1314;width:29pt'>
+                <col width=34 span=2 style='mso-width-source:userset;mso-width-alt:1143;
+ width:25pt'>
+                <col width=37 style='mso-width-source:userset;mso-width-alt:1245;width:27pt'>
+                <col width=60 style='mso-width-source:userset;mso-width-alt:2048;width:45pt'>
+                <col width=72 style='mso-width-source:userset;mso-width-alt:2457;width:54pt'>
+                <tr class=xl6523528 height=24 style='height:18.0pt'>
+                    <td colspan=9 height=24 class=xl7823528 width=816 style='height:18.0pt;
+  width:610pt'>Benchmark</td>
+                    <td colspan=6 class=xl7723528 width=276 style='border-left:none;width:205pt'>Results</td>
+                </tr>
+                <tr class=xl6423528 height=19 style='height:14.25pt'>
+                    <td colspan=2 height=19 class=xl7523528 style='height:14.25pt'>Benchmark Info</td>
+                    <td colspan=3 class=xl7623528 style='border-left:none'>Dataset</td>
+                    <td colspan=4 class=xl8023528 style='border-right:.5pt solid black;
+  border-left:none'>Pipeline</td>
+                    <td colspan=5 class=xl7423528 style='border-left:none'>Metrics</td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>Comments</td>
+                </tr>
+                <tr class=xl6423528 height=19 style='height:14.25pt'>
+                    <td height=19 class=xl6723528 style='height:14.25pt;border-top:none'>Benchmark
+                        Name</td>
+                    <td class=xl6723528 style='border-top:none;border-left:none'>Date</td>
+                    <td class=xl6823528 style='border-top:none;border-left:none'>Dataset Name</td>
+                    <td class=xl6823528 style='border-top:none;border-left:none'>Dataset Type</td>
+                    <td class=xl6823528 style='border-top:none;border-left:none'>Ref.<span
+                            style='mso-spacerun:yes'>  </span>Dataset</td>
+                    <td class=xl6923528 style='border-top:none;border-left:none'>Name</td>
+                    <td class=xl6923528 style='border-top:none;border-left:none'>Network</td>
+                    <td class=xl6923528 style='border-top:none;border-left:none'>Params</td>
+                    <td class=xl6923528 style='border-top:none;border-left:none'>Theoretical
+                        Latency</td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>PESQ</td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>STOI</td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>MOS</td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>WER<span
+                            style='mso-spacerun:yes'> </span></td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>OVERALL</td>
+                    <td class=xl6623528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>BAR_NOISE</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>WILD</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Mega_24</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Mega</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>40</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>TV_BACKGROUND</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>WILD</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>INDOORS_QUIET</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Demucs_only</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Demucs</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>10</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>TV_FOREGROUND</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>WILD</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>VCTK</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Mega+Demucs</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>50</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>INDOORS_HOME</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>WILD</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>LIBRISPEECH</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Gold_standard</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>1000</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>INDOORS_TRANSPORT</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>WILD</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>LIBRISPEECH</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>Mega_12</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>40</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>INDOORS_QUIET</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>WILD</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>LIBRISPEECH</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>WavLM_Ov2</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>400</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>MUSIC</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>SYNTHETIC</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>INDOORS_QUIET</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>WavLM_Ov5</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 align=right style='border-top:none;border-left:none'>200</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl7023528 style='height:14.25pt;border-top:none'>&nbsp;</td>
+                    <td class=xl7023528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7123528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7223528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                    <td class=xl7323528 style='border-top:none;border-left:none'>&nbsp;</td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl1523528 style='height:14.25pt'></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl1523528 style='height:14.25pt'></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl1523528 style='height:14.25pt'></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl1523528 style='height:14.25pt'></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                </tr>
+                <tr height=19 style='height:14.25pt'>
+                    <td height=19 class=xl1523528 style='height:14.25pt'></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                    <td class=xl1523528></td>
+                </tr>
+
+            </table>
+
+        </div>
     <hr/>
 
     <div>
         Previous catch-ups:
+        <a href="index_20240607.html">2024-06-07</a>
         <a href="index_20240517.html">2024-05-17</a>
         <a href="index_20231020.html">2023-10-20</a>
         <a href="index_20231013.html">2023-10-13</a>
@@ -230,6 +1061,7 @@
             <a href="#">(Hide)</a>
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>
