@@ -1,0 +1,28 @@
+metadata:
+  benchmark_dir: /nfs/home/speech_benchmarking/sample_files//tv_background/metrics
+  input_dir: /nfs/home/speech_benchmarking/sample_files//tv_background/audio
+  run_info:
+    host: box-Z170XP-SLI
+    name: tv_background
+    start_time: 2024-12-11-17-04-48
+    user: josh
+metrics:
+  charlotte_lounge_tv_16k_medium.wav:
+    CAcc: 1.0
+    CER: 0.0
+    EED: 0.0009923916077241302
+    MOS_BAK: 2.7287063598632812
+    MOS_BAK_p: 2.7071950435638428
+    MOS_OVR: 2.323624610900879
+    MOS_OVR_p: 2.6505208015441895
+    MOS_SIG: 2.997720718383789
+    MOS_SIG_p: 3.694392442703247
+    PESQ: 1.201542615890503
+    SI-SNR: -9.863072395324707
+    STOI: 0.3725537359714508
+    WAcc: 1.0
+    WER: 0.0
+    WER_JOSH: 0.0
+    WIP: 1.0
+    p808_MOS: 2.565676212310791
+    p808_MOS_p: 2.565676212310791

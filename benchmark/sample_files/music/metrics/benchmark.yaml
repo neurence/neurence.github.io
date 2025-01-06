@@ -1,0 +1,47 @@
+metadata:
+  benchmark_dir: /nfs/home/speech_benchmarking/sample_files//music/metrics
+  input_dir: /nfs/home/speech_benchmarking/sample_files//music/audio
+  run_info:
+    host: box-Z170XP-SLI
+    name: music
+    start_time: 2024-12-11-17-06-02
+    user: josh
+metrics:
+  music_in_office_with_speech_1_easy.wav:
+    CAcc: 1.0
+    CER: 0.0
+    EED: 0.0010159160010516644
+    MOS_BAK: 2.104909896850586
+    MOS_BAK_p: 2.108876943588257
+    MOS_OVR: 1.8475422859191895
+    MOS_OVR_p: 2.6617770195007324
+    MOS_SIG: 2.490569591522217
+    MOS_SIG_p: 4.106269836425781
+    PESQ: 1.23824942111969
+    SI-SNR: 2.1445388793945312
+    STOI: 0.778730571269989
+    WAcc: 1.0
+    WER: 0.0
+    WER_JOSH: 0.0
+    WIP: 1.0
+    p808_MOS: 2.805487632751465
+    p808_MOS_p: 2.805487632751465
+  music_in_office_with_speech_2_easy.wav:
+    CAcc: 1.0
+    CER: 0.0
+    EED: 0.0005511666531674564
+    MOS_BAK: 1.231857180595398
+    MOS_BAK_p: 2.2442033290863037
+    MOS_OVR: 1.1593085527420044
+    MOS_OVR_p: 2.3919291496276855
+    MOS_SIG: 1.243098497390747
+    MOS_SIG_p: 3.641164779663086
+    PESQ: 1.1682461500167847
+    SI-SNR: -4.537027359008789
+    STOI: 0.6561514735221863
+    WAcc: 1.0
+    WER: 0.0
+    WER_JOSH: 0.0
+    WIP: 1.0
+    p808_MOS: 2.5571064949035645
+    p808_MOS_p: 2.5571064949035645
