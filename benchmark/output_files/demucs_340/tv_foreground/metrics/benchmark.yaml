@@ -1,0 +1,28 @@
+metadata:
+  benchmark_dir: /nfs/home/speech_benchmarking/output_files/demucs_340//tv_foreground/metrics
+  input_dir: /nfs/home/speech_benchmarking/output_files/demucs_340//tv_foreground/audio
+  run_info:
+    host: box-Z170XP-SLI
+    name: tv_foreground
+    start_time: 2025-01-03-16-42-58
+    user: josh
+metrics:
+  james_may_through_laptop_easy.wav:
+    CAcc: 0.9759174585342407
+    CER: 0.024082569405436516
+    EED: 0.023616809397935867
+    MOS_BAK: 3.6993768215179443
+    MOS_BAK_p: 2.183202028274536
+    MOS_OVR: 2.82100772857666
+    MOS_OVR_p: 2.532064914703369
+    MOS_SIG: 3.2485311031341553
+    MOS_SIG_p: 3.9500479698181152
+    PESQ: 1.4660612344741821
+    SI-SNR: 6.809476852416992
+    STOI: 0.8562041521072388
+    WAcc: 0.939226508140564
+    WER: 0.06077348068356514
+    WER_JOSH: 0.06077348068356514
+    WIP: 0.8870472311973572
+    p808_MOS: 3.3010900020599365
+    p808_MOS_p: 3.3010900020599365

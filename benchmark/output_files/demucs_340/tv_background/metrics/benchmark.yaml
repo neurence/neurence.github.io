@@ -1,0 +1,28 @@
+metadata:
+  benchmark_dir: /nfs/home/speech_benchmarking/output_files/demucs_340//tv_background/metrics
+  input_dir: /nfs/home/speech_benchmarking/output_files/demucs_340//tv_background/audio
+  run_info:
+    host: box-Z170XP-SLI
+    name: tv_background
+    start_time: 2025-01-03-16-42-56
+    user: josh
+metrics:
+  charlotte_lounge_tv_16k_medium.wav:
+    CAcc: 0.7419354915618896
+    CER: 0.25806450843811035
+    EED: 0.26545026898384094
+    MOS_BAK: 2.489591598510742
+    MOS_BAK_p: 2.2417984008789062
+    MOS_OVR: 1.9498975276947021
+    MOS_OVR_p: 2.3784985542297363
+    MOS_SIG: 2.483224868774414
+    MOS_SIG_p: 3.6711487770080566
+    PESQ: 1.2897578477859497
+    SI-SNR: -2.459514856338501
+    STOI: 0.558576226234436
+    WAcc: 0.5869565010070801
+    WER: 0.41304346919059753
+    WER_JOSH: 0.41304346919059753
+    WIP: 0.3601778447628021
+    p808_MOS: 2.6484997272491455
+    p808_MOS_p: 2.6484997272491455

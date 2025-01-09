@@ -1,0 +1,28 @@
+metadata:
+  benchmark_dir: /Users/deborah/benchmark/wavlm_ov5_maleenc_inference/tv_background/metrics
+  input_dir: /Users/deborah/benchmark/wavlm_ov5_maleenc_inference/tv_background/audio
+  run_info:
+    host: Deborahs-MacBook-Pro.local
+    name: tv_background
+    start_time: 2024-12-18-15-21-20
+    user: deborah
+metrics:
+  charlotte_lounge_tv_16k_medium.wav:
+    CAcc: 0.4050179123878479
+    CER: 0.5949820876121521
+    EED: 0.5103023648262024
+    MOS_BAK: 4.215774059295654
+    MOS_BAK_p: 4.701862335205078
+    MOS_OVR: 3.105820417404175
+    MOS_OVR_p: 4.093669891357422
+    MOS_SIG: 3.34010648727417
+    MOS_SIG_p: 4.330133438110352
+    PESQ: 3.787184000015259
+    SI-SNR: 20.669803619384766
+    STOI: 0.9772636294364929
+    WAcc: 0.1521739363670349
+    WER: 0.8478260636329651
+    WER_JOSH: 0.8478260636329651
+    WIP: 0.03550724685192108
+    p808_MOS: 3.326709032058716
+    p808_MOS_p: 3.326709032058716

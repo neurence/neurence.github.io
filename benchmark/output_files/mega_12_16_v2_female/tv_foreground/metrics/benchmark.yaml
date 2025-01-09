@@ -1,0 +1,28 @@
+metadata:
+  benchmark_dir: /nfs/home/speech_benchmarking/output_files/mega_12_16_v2_female/tv_foreground/metrics
+  input_dir: /nfs/home/speech_benchmarking/output_files/mega_12_16_v2_female/tv_foreground/audio
+  run_info:
+    host: box-Z170XP-SLI
+    name: tv_foreground
+    start_time: 2024-12-12-17-45-19
+    user: josh
+metrics:
+  james_may_through_laptop_easy.wav:
+    CAcc: 0.8256880640983582
+    CER: 0.17431192100048065
+    EED: 0.20117445290088654
+    MOS_BAK: 4.173861026763916
+    MOS_BAK_p: 4.1863112449646
+    MOS_OVR: 3.3909897804260254
+    MOS_OVR_p: 3.908339500427246
+    MOS_SIG: 3.6466565132141113
+    MOS_SIG_p: 4.34004020690918
+    PESQ: 3.8922111988067627
+    SI-SNR: 19.368511199951172
+    STOI: 0.988142192363739
+    WAcc: 0.7237569093704224
+    WER: 0.27624309062957764
+    WER_JOSH: 0.27624309062957764
+    WIP: 0.5544570684432983
+    p808_MOS: 3.887406826019287
+    p808_MOS_p: 3.887406826019287

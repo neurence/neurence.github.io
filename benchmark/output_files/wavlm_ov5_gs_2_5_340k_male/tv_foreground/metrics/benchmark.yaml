@@ -1,0 +1,28 @@
+metadata:
+  benchmark_dir: /Users/deborah/benchmark/wavlm_ov5_maleenc_inference/tv_foreground/metrics
+  input_dir: /Users/deborah/benchmark/wavlm_ov5_maleenc_inference/tv_foreground/audio
+  run_info:
+    host: Deborahs-MacBook-Pro.local
+    name: tv_foreground
+    start_time: 2024-12-18-15-21-15
+    user: deborah
+metrics:
+  james_may_through_laptop_easy.wav:
+    CAcc: 0.7454128265380859
+    CER: 0.2545871436595917
+    EED: 0.267525315284729
+    MOS_BAK: 4.141913890838623
+    MOS_BAK_p: 4.374738693237305
+    MOS_OVR: 3.2866768836975098
+    MOS_OVR_p: 3.8007826805114746
+    MOS_SIG: 3.518345594406128
+    MOS_SIG_p: 4.099789619445801
+    PESQ: 3.7690563201904297
+    SI-SNR: 25.688278198242188
+    STOI: 0.9902580976486206
+    WAcc: 0.6187845468521118
+    WER: 0.38121548295021057
+    WER_JOSH: 0.38121548295021057
+    WIP: 0.4414259195327759
+    p808_MOS: 3.846006155014038
+    p808_MOS_p: 3.846006155014038

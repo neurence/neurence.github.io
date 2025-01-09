@@ -1,0 +1,10 @@
+force: false
+input_dir: /nfs/home/speech_benchmarking/sample_files/
+output_dir: ./wavlm_ov5_femaleenc_inference/
+pipeline: Mega + FreeVC
+pipeline_args:
+  embedding: Female
+  freevc_checkpoint: /nfs/home/SpeechOutput/freevc_gold_standard_2_5/2024-05-10-17-15-06-hippo2-josh-freevc_gold_standard_2_5/G_340000.pth
+  wavlm_version: microsoft/wavlm-large
+start_time: 2024-12-18-10-28-55
+truncate_seconds: 600

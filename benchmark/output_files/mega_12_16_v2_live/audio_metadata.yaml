@@ -1,0 +1,10 @@
+force: false
+input_dir: /nfs/home/speech_benchmarking/sample_files/
+output_dir: /nfs/home/speech_benchmarking/output_files/mega_12_16_v2_live/
+pipeline: Mega + FreeVC
+pipeline_args:
+  embedding: Live
+  freevc_checkpoint_dir: /nfs/home/SpeechOutput/FreeVC/fully_causal_decoder/
+  mega_checkpoint_dir: /nfs/home/SpeechOutput/WavMega/WavMega12_16_v2/
+start_time: 2024-12-11-14-07-50
+truncate_seconds: 3600
