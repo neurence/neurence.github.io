@@ -99,7 +99,7 @@ function updateAudioFiles() {
 function getAudioFilePath(benchmark, file) {
     const dictEntry = masterDict[file][benchmark];
     const category = dictEntry['category'];
-    return `benchmark/output_files/${benchmark}/${category}/audio/${file}`;
+    return `/benchmark/output_files/${benchmark}/${category}/audio/${file}`;
     // e.g. benchmark/output_files/demucs_340/crowd/audio/cambridge_pub_recording_060723_183053.wav
 
 }
