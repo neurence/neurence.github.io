@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catchup 20230526</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        div {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>wav2vec2wav: A Wav2Vec-based autoencoder</h1>
+<div>
+    <p>
+        <a href="https://jonathanbgn.com/2021/09/30/illustrated-wav2vec-2.html">Wav2Vec2</a> is a fully-causal
+        Transformer network producing rich embeddings from raw speech.
+
+    </p>
+    <p>
+        It has been used for a number of speech tasks, including speaker identification and diarization, emotion
+        detection, and, of course, speech to text.
+    </p>
+    <p>
+        We're currently running experiments to use a pretrained Wav2Vec2 model in conjunction with a decoder of our own
+        design to resynthesize audio.
+        <b>The decoder models are at an early stage of training -- training takes about seven days.</b>
+    </p>
+    <table>
+        <thead>
+        <tr>
+            <th>Sample</th>
+            <th>w2v_conv</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_female_clean_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v_conv/525/out_clean_female_020.wav"></audio>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_male_clean_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v_conv/525/out_clean_male_020.wav"></audio>
+            </td>
+        </tr>
+                <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_female_noisy_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v_conv/525/out_noisy_female_020.wav"></audio>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_male_noisy_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v_conv/525/out_noisy_male_020.wav"></audio>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+       <table>
+        <thead>
+        <tr>
+            <th>Sample</th>
+            <th>w2v_gan</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_female_clean_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v2w/hidden_state_XX/55/out_clean_female_020.wav"></audio>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_male_clean_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v2w/hidden_state_XX/55/out_clean_male_020.wav"></audio>
+
+        </tr>
+                <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_female_noisy_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v2w/hidden_state_XX/55/out_noisy_female_020.wav"></audio>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <audio controls src="media/input_samples/valid_male_noisy_020.wav"></audio>
+            </td>
+            <td>
+                <audio controls src="media/w2v2w/hidden_state_XX/55/out_noisy_male_020.wav"></audio>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+</body>
+</html>
